@@ -21,22 +21,44 @@ If no project is named, it lists candidates from the memory index and asks which
 
 ## Example
 
+Run against `stockdb` (a KR/US OHLCV + macro time-series warehouse on Neon
+Postgres). It has no user-memory file, so state is reconstructed from the project
+folder's changelog/telemetry alone — note the `git(n/a)` / `user-memory(none)` in
+the `src:` line:
+
 ```
-╭─ dharness ─────────────────────────────── v0.9.0 ─╮
-│ 회귀 평가 페이즈 — ko01~85 평가 중, plugin 본체 fix 완료 │
-│                                                    │
-│ 평가     ███████████░░░░░░░░░  ~59%  (50/85 ko)    │
-│ 패치     ████████████████████  100%  (9/9 적용)    │
-╰────────────────────────────────────────────────────╯
+╭─ stockdb ───────────── time-series DW · Neon PG ─╮
+│ KR/US OHLCV + macro warehouse on Neon Postgres   │
+│ read-side: ext viz app + BI (backtest/ML def)    │
+│                                                  │
+│ pipeline   ████████████████████  ~95%  live      │
+│ asset-cov  ███████████████░░░░░  ~75%  KR full   │
+╰──────────────────────────────────────────────────╯
 
  ▸ HANDOFF
-   prev   ✓ CLAUDE.md doctrine 개편 + 정합 sweep (82511fe, v0.9.0)
-   wip    ◔ 미커밋 — batchN 후속·eval-checklist.md·dharness-rating/
-   next   → ko51~60 evaluator dispatch
+   prev   ✓ retention 3yr→1yr pivot (Neon 512MB hit) → promote
+            668,743 rows, DB 113MB/512MB
+   wip    ◔ clean close, 3 deferred items carried
+   next   → calendar_gap re-run on 2770 KR eq / 1yr window
+            + fix 2 test_pykrx defects
 
  ▸ PHASES
-   ✓ ko01-50 평가   ◔ ko51-60   ○ ko61-85   ○ ko86-100 산출물
- ...
+   ✓ schema   ✓ ingestion   ✓ quality   ✓ serving   ✓ daily-auto
+
+ ▸ RESULTS
+   curated 668,743 rows · pykrx 2770 KR sym · KRX 123 idx live
+   DB 113MB/512MB (22%) · pytest 5P+1S · 16 migrations · 11 adapters
+
+ ▸ RECENT (telemetry + changelog)
+   • 05-28  retention pivot + promote 658,925 + VACUUM→113MB
+   • 05-28  KRX OpenAPI key issued → 123 idx live (29,417 rows)
+   • 05-27  KR full universe 2770 sym, 3yr backfill (42m)
+
+ ⚠ deferred: calendar_gap re-run · 2 test_pykrx defects · FRED/ECOS keys
+ ⚠ no git repo — all work untracked despite Trunk-based rule
+
+ src: changelog.md + _workspace(telemetry ×4d) + CLAUDE.md
+      + git(n/a) + user-memory(none for stockdb)
 ```
 
 ## Install
@@ -47,5 +69,5 @@ Copy the `project-status/` directory into `~/.claude/skills/`.
 
 The gather step is deliberately budgeted ("a glance, not an audit"): one repo, one
 summary per track, glob for chunk existence rather than reading every file. In
-testing this cut token cost ~78% (301k → 67k) versus an unbounded walk, with no loss
-of dashboard quality. See `evals/` and the workspace benchmark for the measurements.
+testing this cut token cost ~60% (301k → 120k) versus an unbounded walk, with no
+loss of dashboard quality.
