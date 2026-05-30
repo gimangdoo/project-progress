@@ -61,6 +61,51 @@ the `src:` line:
       + git(n/a) + user-memory(none for stockdb)
 ```
 
+## Language
+
+Labels render in English or Korean. The skill picks the language from, in order:
+`--lang ko` / `--lang en` flag → the language of your request → English default.
+So `/project-status stockdb --lang ko` or simply asking in Korean
+("stockdb 현황 보여줘") yields Korean chrome. Only the fixed labels are translated;
+the data (commit subjects, notes) stays in its source language.
+
+Same stockdb state, Korean labels:
+
+```
+╭─ stockdb ───────────── time-series DW · Neon PG ─╮
+│ KR/US OHLCV + 매크로 웨어하우스 (Neon Postgres)  │
+│ 읽기측: 외부 시각화 앱 + BI (백테스트/ML 예정)   │
+│                                                  │
+│ 파이프라인 ████████████████████  ~95%  운영중    │
+│ 자산범위   ███████████████░░░░░  ~75%  KR 전종목  │
+╰──────────────────────────────────────────────────╯
+
+ ▸ 인계                             (작업 재개 지점)
+   이전   ✓ retention 3yr→1yr 전환 (Neon 512MB 도달) →
+            promote 668,743행, DB 113MB/512MB
+   진행   ◔ 정상 종료, 보류 3건 이월
+   다음   → calendar_gap 재실행 (2770 KR eq / 1년 윈도우)
+            + test_pykrx 결함 2건 수정
+
+ ▸ 단계
+   ✓ 스키마   ✓ 적재   ✓ 품질   ✓ 서빙   ✓ 일일자동화
+
+ ▸ 결과
+   curated 668,743행 · pykrx 2770 KR 종목 · KRX 123 지수 운영
+   DB 113MB/512MB (22%) · pytest 5P+1S · 마이그레이션 16 · 어댑터 11
+
+ ▸ 최근 (telemetry + changelog)
+   • 05-28  retention 전환 + promote 658,925 + VACUUM→113MB
+   • 05-28  KRX OpenAPI 키 발급 → 123 지수 운영 (29,417행)
+   • 05-27  KR 전체 유니버스 2770 종목, 3년 백필 (42분)
+
+ ⚠ 보류: calendar_gap 재실행 · test_pykrx 결함 2건 · FRED/ECOS 키
+ ⚠ git repo 없음 — Trunk-based 규칙에도 전 작업 미추적
+
+ 출처: changelog.md + _workspace(telemetry ×4일) + CLAUDE.md
+      + git(없음) + 메모리(stockdb 없음)
+```
+
 ## Install
 
 Copy the `project-status/` directory into `~/.claude/skills/`.

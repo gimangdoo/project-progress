@@ -1,6 +1,6 @@
 ---
 name: project-status
-description: Show a project's progress as an ASCII terminal dashboard (title box + progress bars + phase checklist + session handoff timeline + recent activity + next actions) at the start of a session. Gathers state from three sources — the user's memory files, the project folder's own status files, and git history. Use when the user runs /project-status, asks "where is project X", "show progress on X", "현황 보여줘", "어디까지 했지", "이어서 하자", or wants a one-glance status of ongoing work when picking a project back up.
+description: Show a project's progress as an ASCII terminal dashboard (title box + progress bars + phase checklist + session handoff timeline + recent activity + next actions) at the start of a session. Renders labels in English or Korean (--lang ko/en, else matches the prompt language). Gathers state from three sources — the user's memory files, the project folder's own status files, and git history. Use when the user runs /project-status, asks "where is project X", "show progress on X", "현황 보여줘", "어디까지 했지", "이어서 하자", or wants a one-glance status of ongoing work when picking a project back up.
 ---
 
 # project-status
@@ -17,6 +17,36 @@ of "what I was doing last session" matters as much as the raw progress numbers.
 
 On Windows the memory dir is e.g.
 `C:\Users\user01\.claude\projects\C--Users-user01-awesome-files\memory\`.
+
+## 0.5 Resolve the output language
+
+The dashboard's fixed labels (section headers, `prev/wip/next`, the src line) can
+render in English or Korean. Pick the language like this, in priority order:
+
+1. **Explicit flag** — `--lang ko` / `--lang en` (or `ko` / `en` / `한글` / `english`
+   as a trailing word) in the user's command → obey it.
+2. **Prompt language** — otherwise match the language the user asked in. A Korean
+   request ("현황 보여줘", "어디까지 했지") → Korean labels. An English request →
+   English labels.
+3. **Default** — English.
+
+Only the fixed chrome is translated. The *content* (commit subjects, memory notes,
+phase names) stays in whatever language the source wrote it — don't translate the
+data, just the labels. Use this mapping:
+
+| element | English | 한글 |
+|---|---|---|
+| handoff header | `▸ HANDOFF` | `▸ 인계` |
+| phases header | `▸ PHASES` | `▸ 단계` |
+| results header | `▸ RESULTS` | `▸ 결과` |
+| recent header | `▸ RECENT` | `▸ 최근` |
+| prev / wip / next | `prev` / `wip` / `next` | `이전` / `진행` / `다음` |
+| status line one-liner hint | `(where I left off)` | `(작업 재개 지점)` |
+| provenance prefix | `src:` | `출처:` |
+| not-a-repo marker | `git(n/a)` | `git(없음)` |
+| no-memory marker | `user-memory(none)` | `메모리(없음)` |
+
+Keep the glyphs (`✓ ◔ ○ → █ ░ ⚠ ▸`) the same in both languages.
 
 ## 1. Gather from THREE sources (read-only)
 
@@ -71,7 +101,8 @@ Fixed outer box width = 54 chars (the `╭…╮` / `╰…╯` borders). Keep e
 row padded to that width so the right border lines up — misaligned boxes read as
 broken. Progress bar = 20 cells, `█` filled / `░` empty. Round to nearest cell.
 
-Use this shape (fill real data; sections in fixed order top→bottom):
+Use this shape (fill real data; sections in fixed order top→bottom). Labels shown
+in English here — swap to the §0.5 한글 column when the resolved language is Korean:
 
 ```
 ╭─ <name> ──────────────────────────── <version> ─╮
@@ -100,6 +131,38 @@ Use this shape (fill real data; sections in fixed order top→bottom):
 
  src: memory(<file>) + <status dir> + git(<state>)
 ```
+
+Korean rendering of the same shape (labels translated, data left as-is):
+
+```
+╭─ <name> ──────────────────────────── <version> ─╮
+│ <메모리 한 줄 상태>                              │
+│                                                  │
+│ <트랙1>   ███████████░░░░░░░░░  ~60%  (50/85)    │
+│ <트랙2>   ████████████████████  100%  (9/9)      │
+╰──────────────────────────────────────────────────╯
+
+ ▸ 인계                             (작업 재개 지점)
+   이전   ✓ <마지막 완료 작업 + 커밋>
+   진행   ◔ <중단된 작업, 없으면 "없음">
+   다음   → <다음 작업>
+
+ ▸ 단계
+   ✓ <완료>   ✓ <완료>   ◔ <진행중>   ○ <대기>
+
+ ▸ 결과
+   <핵심 집계 1~2줄>
+
+ ▸ 최근
+   • <커밋 해시 + 제목, 또는 메모리 노트>
+
+ ⚠ <경고 줄>
+
+ 출처: memory(<파일>) + <상태 디렉토리> + git(<상태>)
+```
+
+Note the label widths differ between languages (`prev`=4 vs `이전`=2 chars wide on
+screen). Re-pad the `이전/진행/다음` column so the `✓/◔/→` glyphs still align.
 
 Formatting rules that keep it scannable:
 - Section headers use `▸ NAME` so they stand out from the indented body rows.
