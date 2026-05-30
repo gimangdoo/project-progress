@@ -108,7 +108,16 @@ Same stockdb state, Korean labels:
 
 ## Install
 
-Copy the `project-status/` directory into `~/.claude/skills/`.
+This repo is a Claude Code plugin marketplace. In Claude Code:
+
+```
+/plugin marketplace add gimangdoo/project-progress
+/plugin install project-status@gimangdoo
+```
+
+Then run `/project-status` (or ask "어디까지 했지?", "show progress on X").
+
+Manual alternative: copy `skills/project-status/` into `~/.claude/skills/`.
 
 ## Design notes
 

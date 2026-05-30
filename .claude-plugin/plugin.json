@@ -1,0 +1,12 @@
+{
+  "name": "project-status",
+  "description": "Render a project's progress as an ASCII terminal dashboard — title box, progress bars, session-handoff timeline (prev/wip/next), phase checklist, recent activity, and warnings. Reconstructs state from memory files, project status files, and git history. English/Korean labels.",
+  "version": "1.0.0",
+  "author": {
+    "name": "gimangdoo",
+    "url": "https://github.com/gimangdoo"
+  },
+  "homepage": "https://github.com/gimangdoo/project-progress",
+  "repository": "https://github.com/gimangdoo/project-progress",
+  "keywords": ["project-status", "dashboard", "progress", "terminal", "skill"]
+}

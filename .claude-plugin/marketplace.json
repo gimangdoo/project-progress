@@ -1,0 +1,17 @@
+{
+  "name": "gimangdoo",
+  "description": "gimangdoo's Claude Code plugins",
+  "owner": {
+    "name": "gimangdoo",
+    "url": "https://github.com/gimangdoo"
+  },
+  "plugins": [
+    {
+      "name": "project-status",
+      "source": "./",
+      "description": "ASCII terminal dashboard of one project's progress — handoff timeline, progress bars, phase checklist. EN/KO labels.",
+      "version": "1.0.0",
+      "author": { "name": "gimangdoo" }
+    }
+  ]
+}
