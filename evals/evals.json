@@ -1,0 +1,47 @@
+{
+  "skill_name": "project-status",
+  "evals": [
+    {
+      "id": 0,
+      "name": "named-project-full",
+      "prompt": "/project-status dharness",
+      "expected_output": "ASCII dashboard for dharness: box w/ version, progress bar(s), HANDOFF prev/wip/next, phase checklist (✓/◔/○), results tallies, recent activity, warnings, src line. Numbers match memory body.",
+      "files": [],
+      "assertions": [
+        "ASCII box rendered (╭╮╰╯)",
+        "at least one progress bar (█/░)",
+        "HANDOFF section with prev/wip/next",
+        "phase checklist with ✓/◔/○",
+        "metrics match memory (PASS 11/COND 24/FAIL 14)",
+        "provenance src line",
+        "caught stale memory index",
+        "terse one-screen output"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "casual-other-project",
+      "prompt": "어디까지 했지? methodology-advisor 현황 좀 보여줘",
+      "expected_output": "Recognizes status request for methodology-advisor from casual phrasing; renders its dashboard from memory + project folder; does not re-ask which project.",
+      "files": [],
+      "assertions": [
+        "resolved correct project without re-asking",
+        "dashboard box + bars rendered",
+        "HANDOFF prev/wip/next present",
+        "flagged stale memory if version differs from live"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "no-arg-disambiguation",
+      "prompt": "/project-status",
+      "expected_output": "No project named: lists candidates from MEMORY.md and asks which one. Does not render an arbitrary dashboard.",
+      "files": [],
+      "assertions": [
+        "did NOT render an arbitrary dashboard",
+        "listed candidate projects from MEMORY.md",
+        "asked the user which project"
+      ]
+    }
+  ]
+}
